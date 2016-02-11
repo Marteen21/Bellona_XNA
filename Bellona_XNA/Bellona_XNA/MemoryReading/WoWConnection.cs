@@ -33,13 +33,23 @@ namespace Bellona_XNA.MemoryReading {
             }
         }
 
+        public string WindowTitle {
+            get {
+                return windowTitle;
+            }
+
+            set {
+                windowTitle = value;
+            }
+        }
+
         public WoWConnection(string wTitle) {
-            this.windowTitle = wTitle;
+            this.WindowTitle = wTitle;
         }
         public bool TryToConnect() {
             try {
                 this.Connection = new BlackMagic();
-                this.Connection.OpenProcessAndThread(SProcess.GetProcessFromWindowTitle(this.windowTitle));
+                this.Connection.OpenProcessAndThread(SProcess.GetProcessFromWindowTitle(this.WindowTitle));
                 if (TryToRefreshObjectManager()) {
                     return true;
                 }
@@ -60,6 +70,9 @@ namespace Bellona_XNA.MemoryReading {
             catch {
                 return false;
             }
+        }
+        public ulong GetPlayerGUID() {
+            return this.Connection.ReadUInt64((uint)this.Connection.MainModule.BaseAddress + MemoryOffsets.GlobalInfoPlayerGUID);
         }
     }
 }

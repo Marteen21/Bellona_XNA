@@ -135,7 +135,7 @@
             // 
             // col_ConnectBtn
             // 
-            this.col_ConnectBtn.HeaderText = "Connect";
+            this.col_ConnectBtn.HeaderText = "Add Bot";
             this.col_ConnectBtn.Name = "col_ConnectBtn";
             this.col_ConnectBtn.Text = "Add Bot";
             this.col_ConnectBtn.UseColumnTextForButtonValue = true;

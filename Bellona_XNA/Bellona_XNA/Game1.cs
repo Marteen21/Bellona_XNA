@@ -24,7 +24,7 @@ namespace Bellona_XNA {
         RadarControl radarctrl;
 
         List<WoWUnit> allUnits = new List<WoWUnit>();
-        List<WoWPlayer> allPlayers = new List<WoWPlayer>();
+        public static List<WoWPlayer> allPlayers = new List<WoWPlayer>();
         List<WoWSpell> allSpells = new List<WoWSpell>();
 
 
@@ -131,12 +131,12 @@ namespace Bellona_XNA {
             base.Draw(gameTime);
         }
         private void Refresh(TimeSpan totalgameTime) {
-            if ((totalgameTime - previousRefreshTime) > TimeSpan.FromMilliseconds(100)) {
+            if ((totalgameTime - previousRefreshTime) > TimeSpan.FromMilliseconds(25)) {
                 previousRefreshTime = totalgameTime;
                 mainwow.TryToRefreshObjectManager();
                 WoWObject.GetAllObjects(ref allUnits, ref allSpells, ref allPlayers, mainwow);
                 mainPlayer.RefreshFromList(allPlayers, mainPlayer.WindowTitle);
-                
+                WoWPlayer.SetWindowTitleForPlayer(ref allPlayers, mainPlayer.Guid, mainwow.WindowTitle);
                 foreach (WoWPlayer wp in allPlayers) {
                     if (wp.WindowTitle != null && Vector2.Distance(wp.MovementTarget, new Vector2(wp.Position.X, wp.Position.Y)) < 80) {
                         if (MoveController.RotateTowards(wp, wp.MovementTarget, (double)0.06 * Math.PI, true)) {
