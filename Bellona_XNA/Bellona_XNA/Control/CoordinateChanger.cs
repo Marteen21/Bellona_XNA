@@ -12,7 +12,7 @@ namespace Bellona_XNA.Control {
             return abs - (viewPort/2);
         }
         public static Vector2 RelativeToWorld (Vector2 relative, Vector3 playerPos) {
-            return ((relative / RadarObject.RadarZoom) + new Vector2(playerPos.X, playerPos.Y));
+            return (-new Vector2((relative / RadarObject.RadarZoom).Y, (relative / RadarObject.RadarZoom).X) + new Vector2(playerPos.X, playerPos.Y));
         }
     }
     class Angles {

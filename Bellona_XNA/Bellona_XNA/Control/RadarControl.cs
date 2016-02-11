@@ -1,5 +1,6 @@
 ﻿using Bellona_XNA.Draw;
 using Bellona_XNA.MemoryReading;
+using Bellona_XNA.WinForms;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -41,9 +42,10 @@ namespace Bellona_XNA.Control {
                 selecting = false;
             }
         }
-        public void CommandRefresh(ref List<WoWPlayer> allplayers, Game mygame) {
+        public void CommandRefresh(ref List<WoWPlayer> allplayers, Game1 mygame) {
             MouseState mymouse = Mouse.GetState();
-            if (mymouse.LeftButton == ButtonState.Pressed && mygame.IsActive) {
+            Console.WriteLine(Mouse.WindowHandle);
+            if (mymouse.LeftButton == ButtonState.Pressed /*&& mygame.IsActive*/) {
                 if (selecting) {
                     selectionBox.Width = (int)Math.Abs(mymouse.X - startPoint.X);
                     selectionBox.Height = (int)Math.Abs(mymouse.Y - startPoint.Y);
@@ -68,12 +70,11 @@ namespace Bellona_XNA.Control {
                 needsToDraw = false;
                 selecting = false;
             }
-            if (mymouse.RightButton == ButtonState.Pressed && mygame.IsActive) {
+            if (mymouse.RightButton == ButtonState.Pressed /*&& mygame.IsActive*/) {
                 Vector2 mousevector = new Vector2(mymouse.X, mymouse.Y);
-                Console.WriteLine(CoordinateChanger.AbsoluteToRelative(mousevector, new Vector2(720, 720)));
                 foreach (WoWPlayer wp in allplayers) {
                     if (wp.RPlayer.Selected) {
-                        wp.MovementTarget=CoordinateChanger.RelativeToWorld(CoordinateChanger.AbsoluteToRelative(mousevector, new Vector2(720, 720)), Game1.mainPlayer.Position);
+                        wp.MovementTarget=CoordinateChanger.RelativeToWorld(CoordinateChanger.AbsoluteToRelative(mousevector,new Vector2(600, 600)), Game1.mainPlayer.Position);
                     }
                 }
 
@@ -86,7 +87,8 @@ namespace Bellona_XNA.Control {
         }
         public void SetSelectedPlayers(ref List<WoWPlayer> allplayers) {
             foreach (WoWPlayer wp in allplayers) {
-                if (wp.RPlayer.AbsoluteRadarPos.X > selectionBox.X &&
+                if (wp.WindowTitle != null &&
+                    wp.RPlayer.AbsoluteRadarPos.X > selectionBox.X &&
                     wp.RPlayer.AbsoluteRadarPos.X < selectionBox.X + selectionBox.Width &&
                     wp.RPlayer.AbsoluteRadarPos.Y > selectionBox.Y &&
                     wp.RPlayer.AbsoluteRadarPos.Y < selectionBox.Y + selectionBox.Height) {

@@ -13,14 +13,13 @@ using Bellona_XNA.Control;
 using Bellona_XNA.Radar;
 using Bellona_XNA.MemoryReading;
 using Bellona_XNA.Control.WoWControl;
+using Bellona_XNA.WinForms;
 
 namespace Bellona_XNA {
-    /// <summary>
-    /// This is the main type for your game
-    /// </summary>
-    public class Game1 : Microsoft.Xna.Framework.Game {
+    public class Game1 : Game {
         GraphicsDeviceManager graphics;
         ExtendedSpriteBatch spriteBatch;
+        private IntPtr drawSurface;
 
         RadarControl radarctrl;
 
@@ -28,39 +27,53 @@ namespace Bellona_XNA {
         List<WoWPlayer> allPlayers = new List<WoWPlayer>();
         List<WoWSpell> allSpells = new List<WoWSpell>();
 
+
         WoWConnection mainwow;
         public static WoWPlayer mainPlayer;
+        public static bool GameEnabled;
 
         TimeSpan previousRefreshTime = TimeSpan.Zero;
-        public Game1() {
+        public Game1(IntPtr drawSurface) {
             graphics = new GraphicsDeviceManager(this);
             graphics.IsFullScreen = false;
-            graphics.PreferredBackBufferWidth = 720;
-            graphics.PreferredBackBufferHeight = 720;
+            graphics.PreferredBackBufferHeight = 600;
+            graphics.PreferredBackBufferWidth = 600;
             Content.RootDirectory = "Content";
+            this.drawSurface = drawSurface;
+            Mouse.WindowHandle = drawSurface;
+            graphics.PreparingDeviceSettings +=
+            new EventHandler<PreparingDeviceSettingsEventArgs>(graphics_PreparingDeviceSettings);
+            System.Windows.Forms.Control.FromHandle((this.Window.Handle)).VisibleChanged +=
+            new EventHandler(Game1_VisibleChanged);
         }
 
-        /// <summary>
-        /// Allows the game to perform any initialization it needs to before starting to run.
-        /// This is where it can query for any required services and load any non-graphic
-        /// related content.  Calling base.Initialize will enumerate through any components
-        /// and initialize them as well.
-        /// </summary>
+        void graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e) {
+            e.GraphicsDeviceInformation.PresentationParameters.DeviceWindowHandle =
+            drawSurface;
+        }
+
+        private void Game1_VisibleChanged(object sender, EventArgs e) {
+            if (System.Windows.Forms.Control.FromHandle((this.Window.Handle)).Visible == true)
+                System.Windows.Forms.Control.FromHandle((this.Window.Handle)).Visible = false;
+        }
+
         protected override void Initialize() {
-            // TODO: Add your initialization logic here
+            base.Initialize();
+        }
+        public bool ConnectToMainWoW(string windowTitle) {
+            GameEnabled = false;
             radarctrl = new RadarControl();
-            mainwow = new WoWConnection("World of Warcraft");
+            mainwow = new WoWConnection(windowTitle);
             if (!mainwow.TryToConnect()) {
                 throw new Exception();
             }
             mainPlayer = new WoWPlayer(mainwow.Connection.ReadUInt64((uint)mainwow.Connection.MainModule.BaseAddress + MemoryOffsets.GlobalInfoPlayerGUID));
-            base.Initialize();
+            GameEnabled = true;
+            return true;
         }
 
-        /// <summary>
-        /// LoadContent will be called once per game and is the place to load
-        /// all of your content.
-        /// </summary>
+
+        #region ResourceLoading
         protected override void LoadContent() {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new ExtendedSpriteBatch(GraphicsDevice);
@@ -70,14 +83,10 @@ namespace Bellona_XNA {
 
             // TODO: use this.Content to load your game content here
         }
-
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// all content.
-        /// </summary>
         protected override void UnloadContent() {
             // TODO: Unload any non ContentManager content here
-        }
+        } 
+        #endregion
 
         /// <summary>
         /// Allows the game to run logic such as updating the world,
@@ -89,8 +98,10 @@ namespace Bellona_XNA {
             if (Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.Escape)) {
                 this.Exit();
             }
-            radarctrl.CommandRefresh(ref allPlayers, this);
-            Refresh(gameTime.TotalGameTime);
+            if (GameEnabled) {
+                radarctrl.CommandRefresh(ref allPlayers, this);
+                Refresh(gameTime.TotalGameTime);
+            }
 
             base.Update(gameTime);
         }
@@ -102,20 +113,20 @@ namespace Bellona_XNA {
         protected override void Draw(GameTime gameTime) {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
-            spriteBatch.FillRectangle(new Rectangle(Mouse.GetState().X,Mouse.GetState().Y, 5, 5), Color.Red);
+            spriteBatch.FillRectangle(new Rectangle(Mouse.GetState().X, Mouse.GetState().Y, 5, 5), Color.Red);
 
-
-            foreach (WoWUnit rp in allUnits) {
-                rp.RUnit.DrawObject(spriteBatch);
+            if (GameEnabled) {
+                foreach (WoWUnit rp in allUnits) {
+                    rp.RUnit.DrawObject(spriteBatch);
+                }
+                foreach (WoWPlayer rp in allPlayers) {
+                    rp.RPlayer.DrawObject(spriteBatch);
+                }
+                foreach (WoWSpell rs in allSpells) {
+                    rs.RSpell.DrawObject(spriteBatch);
+                }
+                radarctrl.DrawSelectBox(spriteBatch);
             }
-            foreach (WoWPlayer rp in allPlayers) {
-                rp.RPlayer.DrawObject(spriteBatch);
-            }
-            foreach (WoWSpell rs in allSpells) {
-                rs.RSpell.DrawObject(spriteBatch);
-            }
-            radarctrl.DrawSelectBox(spriteBatch);
-
             spriteBatch.End();
             base.Draw(gameTime);
         }
@@ -124,10 +135,11 @@ namespace Bellona_XNA {
                 previousRefreshTime = totalgameTime;
                 mainwow.TryToRefreshObjectManager();
                 WoWObject.GetAllObjects(ref allUnits, ref allSpells, ref allPlayers, mainwow);
-                mainPlayer.RefreshFromList(allPlayers, "World of Warcraft");
-                foreach(WoWPlayer wp in allPlayers) {
-                    if(wp.WindowTitle != null && Vector2.Distance(wp.MovementTarget, new Vector2(wp.Position.X,wp.Position.Y)) < 50) {
-                        if (MoveController.RotateTowards(wp, wp.MovementTarget, (double)0.06*Math.PI, true)) {
+                mainPlayer.RefreshFromList(allPlayers, mainPlayer.WindowTitle);
+                
+                foreach (WoWPlayer wp in allPlayers) {
+                    if (wp.WindowTitle != null && Vector2.Distance(wp.MovementTarget, new Vector2(wp.Position.X, wp.Position.Y)) < 80) {
+                        if (MoveController.RotateTowards(wp, wp.MovementTarget, (double)0.06 * Math.PI, true)) {
                             MoveController.WalkingTowards(wp, wp.MovementTarget, 5);
                         }
                     }
@@ -135,5 +147,4 @@ namespace Bellona_XNA {
             }
         }
     }
-    
 }

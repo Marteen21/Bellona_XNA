@@ -96,6 +96,19 @@ namespace Bellona_XNA.MemoryReading {
             }
             return false;
         }
+        public static bool SetWindowTitleForPlayer(ref List<WoWPlayer> allplayer, ulong playerguid, string playerWindowTitle) {
+            try {
+                allplayer.Find(x => x.Guid == playerguid).WindowTitle = playerWindowTitle;
+                return true;
+            }
+            catch (NullReferenceException) {
+                return false;
+            }
+
+        }
+        public void SetWindowTitle(string WindowTitle) {
+            this.WindowTitle = WindowTitle;
+        }
     }
 
 
