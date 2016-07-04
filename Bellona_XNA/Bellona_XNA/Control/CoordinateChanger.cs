@@ -14,6 +14,9 @@ namespace Bellona_XNA.Control {
         public static Vector2 RelativeToWorld (Vector2 relative, Vector3 playerPos) {
             return (-new Vector2((relative / RadarObject.RadarZoom).Y, (relative / RadarObject.RadarZoom).X) + new Vector2(playerPos.X, playerPos.Y));
         }
+        public static Vector2 WorldToRelative (Vector2 world, Vector3 playerPos) {
+            return RadarObject.RadarZoom * new Vector2(playerPos.Y - world.Y, playerPos.X - world.X);
+        }
     }
     class Angles {
         public static double Calculateangle(WoWPlayer Target, WoWPlayer Player) {

@@ -44,7 +44,6 @@ namespace Bellona_XNA.Control {
         }
         public void CommandRefresh(ref List<WoWPlayer> allplayers, Game1 mygame) {
             MouseState mymouse = Mouse.GetState();
-            Console.WriteLine(Mouse.WindowHandle);
             if (mymouse.LeftButton == ButtonState.Pressed /*&& mygame.IsActive*/) {
                 if (selecting) {
                     selectionBox.Width = (int)Math.Abs(mymouse.X - startPoint.X);

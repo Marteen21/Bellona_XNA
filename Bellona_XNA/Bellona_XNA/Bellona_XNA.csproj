@@ -61,10 +61,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BlackMagic">
-      <HintPath>..\..\..\..\Refs\BlackMagic.dll</HintPath>
+      <HintPath>..\..\..\..\..\Downloads\BlackMagic.1.1\BlackMagic.dll</HintPath>
     </Reference>
     <Reference Include="fasmdll_managed">
-      <HintPath>..\..\..\..\Refs\fasmdll_managed.dll</HintPath>
+      <HintPath>..\..\..\..\..\Downloads\BlackMagic.1.1\fasmdll_managed.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.Game, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
@@ -87,6 +87,7 @@
     <Compile Include="Control\WoWControl\MoveController.cs" />
     <Compile Include="Control\WoWControl\SendKey.cs" />
     <Compile Include="Draw\ExtendedSpriteBatch.cs" />
+    <Compile Include="Maps\WoWMap.cs" />
     <Compile Include="MemoryReading\Helpers\MovementFlags.cs" />
     <Compile Include="MemoryReading\MemoryOffsets.cs" />
     <Compile Include="MemoryReading\WoWConnection.cs" />

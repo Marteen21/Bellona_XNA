@@ -14,12 +14,14 @@ using Bellona_XNA.Radar;
 using Bellona_XNA.MemoryReading;
 using Bellona_XNA.Control.WoWControl;
 using Bellona_XNA.WinForms;
+using Bellona_XNA.Maps;
 
 namespace Bellona_XNA {
     public class Game1 : Game {
         GraphicsDeviceManager graphics;
         ExtendedSpriteBatch spriteBatch;
         private IntPtr drawSurface;
+        WoWMap myMap;
 
         RadarControl radarctrl;
 
@@ -80,6 +82,7 @@ namespace Bellona_XNA {
             RadarUnit.UnitTexture = Content.Load<Texture2D>("arrow_without_border");
             RadarPlayer.PlayerTexture = Content.Load<Texture2D>("arrow");
             RadarSpell.SpellTexture = Content.Load<Texture2D>("donut");
+            myMap = WoWMap.Arena_BE(this);
 
             // TODO: use this.Content to load your game content here
         }
@@ -112,7 +115,10 @@ namespace Bellona_XNA {
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime) {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+            if (GameEnabled) {
+                spriteBatch.Draw(myMap.Img, myMap.whereToDraw(mainPlayer.Position), null, Color.White, myMap.Angle, new Vector2(300,300), 0.72f, SpriteEffects.None, 0);
+            }
             spriteBatch.FillRectangle(new Rectangle(Mouse.GetState().X, Mouse.GetState().Y, 5, 5), Color.Red);
 
             if (GameEnabled) {
@@ -131,7 +137,7 @@ namespace Bellona_XNA {
             base.Draw(gameTime);
         }
         private void Refresh(TimeSpan totalgameTime) {
-            if ((totalgameTime - previousRefreshTime) > TimeSpan.FromMilliseconds(25)) {
+            if ((totalgameTime - previousRefreshTime) > TimeSpan.FromMilliseconds(50)) {
                 previousRefreshTime = totalgameTime;
                 mainwow.TryToRefreshObjectManager();
                 WoWObject.GetAllObjects(ref allUnits, ref allSpells, ref allPlayers, mainwow);
