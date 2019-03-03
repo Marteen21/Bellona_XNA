@@ -15,6 +15,8 @@ namespace Bellona_XNA.MemoryReading {
         private RadarPlayer rPlayer;
         private MovementFlags movingInfo = new MovementFlags(0);
         public Vector2 MovementTarget = new Vector2();
+        private float healthpercent;
+        private float powerpercent;
         public string WindowTitle;
 
         internal RadarPlayer RPlayer {
@@ -57,6 +59,9 @@ namespace Bellona_XNA.MemoryReading {
             }
         }
 
+        public float Healthpercent { get => healthpercent; set => healthpercent = value; }
+        public float Powerpercent { get => powerpercent; set => powerpercent = value; }
+
         public void SetPositions(WoWPlayer other) {
             this.position = other.position;
             this.rotation = other.rotation;
@@ -90,6 +95,7 @@ namespace Bellona_XNA.MemoryReading {
                 if (wu.Guid == this.Guid) {
                     this.Position = wu.Position;
                     this.Rotation = wu.Rotation;
+                    this.BaseAddress = wu.BaseAddress;
                     wu.WindowTitle = WindowTitle;
                     return true;
                 }
@@ -108,6 +114,28 @@ namespace Bellona_XNA.MemoryReading {
         }
         public void SetWindowTitle(string WindowTitle) {
             this.WindowTitle = WindowTitle;
+        }
+
+        public void Refresh(WoWConnection wc) {
+            try {
+                Vector3 myUnitPos = new Vector3(
+                            wc.Connection.ReadFloat(BaseAddress + MemoryOffsets.ObjectManagerUnitPosX),
+                            wc.Connection.ReadFloat(BaseAddress + MemoryOffsets.ObjectManagerUnitPosY),
+                            wc.Connection.ReadFloat(BaseAddress + MemoryOffsets.ObjectManagerUnitPosZ));
+                position = myUnitPos;
+
+                UIntPtr descriptorArrayAddress = (UIntPtr)(wc.Connection.ReadUInt(this.BaseAddress + MemoryOffsets.ObjectManagerLocalDescriptorArray));
+                uint Health = wc.Connection.ReadUInt((uint)descriptorArrayAddress + (uint)MemoryOffsets.Descriptors.Health);
+                uint MaxHealth = wc.Connection.ReadUInt((uint)descriptorArrayAddress + (uint)MemoryOffsets.Descriptors.MaxHealth);
+                uint Power = wc.Connection.ReadUInt((uint)descriptorArrayAddress + (uint)MemoryOffsets.Descriptors.Power);
+                uint MaxPower = wc.Connection.ReadUInt((uint)descriptorArrayAddress + (uint)MemoryOffsets.Descriptors.MaxPower);
+
+                healthpercent = (float)Health / (float)MaxHealth;
+                powerpercent = (float)Power/ (float)MaxPower;
+            }
+            catch {
+
+            }
         }
     }
 

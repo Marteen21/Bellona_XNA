@@ -32,6 +32,7 @@ namespace Bellona_XNA {
 
         WoWConnection mainwow;
         public static WoWPlayer mainPlayer;
+        public static WoWObject target;
         public static bool GameEnabled;
 
         TimeSpan previousRefreshTime = TimeSpan.Zero;
@@ -47,6 +48,77 @@ namespace Bellona_XNA {
             new EventHandler<PreparingDeviceSettingsEventArgs>(graphics_PreparingDeviceSettings);
             System.Windows.Forms.Control.FromHandle((this.Window.Handle)).VisibleChanged +=
             new EventHandler(Game1_VisibleChanged);
+        }
+
+        internal void MoveTo(Vector3 target) {
+            MoveToCommand(target);
+            System.Threading.Thread.Sleep(1000);
+            bool isMoving = true;
+            while (!IsAtTarget(target, 1) && isMoving) {
+                isMoving = mainwow.Connection.ReadUInt((uint)mainwow.Connection.MainModule.BaseAddress + MemoryOffsets.ClickToMoveStarter) == 4;
+            }
+        }
+
+        private void MoveToCommand(Vector3 target) {
+            mainwow.Connection.WriteFloat((uint)mainwow.Connection.MainModule.BaseAddress + MemoryOffsets.ClickToMoveTargetXOffset, target.X);
+            mainwow.Connection.WriteFloat((uint)mainwow.Connection.MainModule.BaseAddress + MemoryOffsets.ClickToMoveTargetYOffset, target.Y);
+            mainwow.Connection.WriteFloat((uint)mainwow.Connection.MainModule.BaseAddress + MemoryOffsets.ClickToMoveTargetZOffset, target.Z);
+
+            mainwow.Connection.WriteUInt((uint)mainwow.Connection.MainModule.BaseAddress + MemoryOffsets.ClickToMoveStarter, 4);
+        }
+
+        public void KillNearbyTargets() {
+            while (SearchForTarget()) {
+                mainPlayer.Refresh(mainwow);
+                while (mainPlayer.Healthpercent < 0.7 || mainPlayer.Powerpercent < 0.7) {
+                    System.Threading.Thread.Sleep(100);
+                    mainPlayer.Refresh(mainwow);
+                }
+                KillTarget();
+            }
+        }
+
+
+        public bool SearchForTarget() {
+            SendKey.Send(ConstController.WindowsVirtualKey.VK_TAB, "World of Warcraft");
+            System.Threading.Thread.Sleep(100);
+            UInt64 targetGuid = mainwow.Connection.ReadUInt64((uint)mainwow.Connection.MainModule.BaseAddress + MemoryOffsets.GlobalInfoTargetGUID);
+            if (targetGuid != 0)
+                return true;
+            else
+                return false;
+        }
+
+
+        public void KillTarget() {
+
+            UInt64 targetGuid = mainwow.Connection.ReadUInt64((uint)mainwow.Connection.MainModule.BaseAddress + MemoryOffsets.GlobalInfoTargetGUID);
+            if (targetGuid != 0) {
+                WoWUnit target = new WoWUnit(targetGuid);
+                target.RefreshFromList(allUnits);
+                target.Refresh(mainwow);
+                mainPlayer.Refresh(mainwow);
+                MoveToCommand(target.Position);
+                if (Vector3.Distance(target.Position, mainPlayer.Position) > 100)
+                    return;
+                while (Vector3.Distance(target.Position, mainPlayer.Position) > 25){
+                    MoveToCommand(target.Position);
+                    System.Threading.Thread.Sleep(50);
+                    target.Refresh(mainwow);
+                    mainPlayer.Refresh(mainwow);
+                };
+                SendKey.Send(ConstController.WindowsVirtualKey.K_W, "World of Warcraft");
+                while (mainwow.Connection.ReadUInt((uint)mainwow.Connection.MainModule.BaseAddress + MemoryOffsets.GlobalInfoTargetGUID) != 0) {
+                    SendKey.Send(ConstController.WindowsVirtualKey.K_1, "World of Warcraft");
+                    System.Threading.Thread.Sleep(50);
+                }
+            }
+            
+        }
+
+        bool IsAtTarget (Vector3 target, float threshold) {
+            mainPlayer.Refresh(mainwow);
+            return Vector3.Distance(mainPlayer.Position, target) < threshold;
         }
 
         void graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e) {
@@ -151,6 +223,10 @@ namespace Bellona_XNA {
                     }
                 }
             }
+        }
+        public void RefreshShit() {
+            mainwow.TryToRefreshObjectManager();
+            WoWObject.GetAllObjects(ref allUnits, ref allSpells, ref allPlayers, mainwow);
         }
     }
 }

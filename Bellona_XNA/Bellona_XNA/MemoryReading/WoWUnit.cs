@@ -64,11 +64,27 @@ namespace Bellona_XNA.MemoryReading {
                 if (wu.Guid == this.Guid) {
                     this.position = wu.position;
                     this.rotation = wu.rotation;
+                    this.BaseAddress = wu.BaseAddress;
                     return true;
                 }
             }
             return false;
         }
+
+
+        public void Refresh(WoWConnection wc) {
+            try {
+                Vector3 myUnitPos = new Vector3(
+                            wc.Connection.ReadFloat(BaseAddress + MemoryOffsets.ObjectManagerUnitPosX),
+                            wc.Connection.ReadFloat(BaseAddress + MemoryOffsets.ObjectManagerUnitPosY),
+                            wc.Connection.ReadFloat(BaseAddress + MemoryOffsets.ObjectManagerUnitPosZ));
+                position = myUnitPos;
+            }
+            catch {
+
+            }
+        }
+
 
         public static void GetAllUnits(out List<WoWUnit> allunits, WoWConnection wc) {
             allunits = new List<WoWUnit>();
@@ -79,7 +95,7 @@ namespace Bellona_XNA.MemoryReading {
                         wc.Connection.ReadFloat(TempObject.BaseAddress + MemoryOffsets.ObjectManagerUnitPosX),
                         wc.Connection.ReadFloat(TempObject.BaseAddress + MemoryOffsets.ObjectManagerUnitPosY),
                         wc.Connection.ReadFloat(TempObject.BaseAddress + MemoryOffsets.ObjectManagerUnitPosZ));
-                    WoWClass myClass = (WoWClass)wc.Connection.ReadByte(wc.Connection.ReadUInt((uint)TempObject.BaseAddress+MemoryOffsets.ObjectManagerLocalDescriptorArray)+ 0x10 +MemoryOffsets.DescriptorArrayClass8);
+                    WoWClass myClass = (WoWClass)wc.Connection.ReadByte(wc.Connection.ReadUInt((uint)TempObject.BaseAddress+MemoryOffsets.ObjectManagerLocalDescriptorArray)+MemoryOffsets.DescriptorArrayClass8);
                     float myUnitRot = wc.Connection.ReadFloat((uint)TempObject.BaseAddress + MemoryOffsets.ObjectManagerUnitRotation);
                     if (myUnitRot > Math.PI) {
                         myUnitRot = -(2 * (float)(Math.PI) - myUnitRot);
@@ -95,6 +111,7 @@ namespace Bellona_XNA.MemoryReading {
 
             }
         }
+
 
 
     }

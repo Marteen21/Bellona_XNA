@@ -26,12 +26,12 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.pctSurface = new System.Windows.Forms.PictureBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.cmbx_mainConnect = new System.Windows.Forms.ComboBox();
-            this.btn_mainConnect = new System.Windows.Forms.Button();
             this.col_WinTitle = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.col_ConnectBtn = new System.Windows.Forms.DataGridViewButtonColumn();
             this.col_Status = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.cmbx_mainConnect = new System.Windows.Forms.ComboBox();
+            this.btn_mainConnect = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pctSurface)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -79,6 +79,35 @@
             this.dataGridView1.TabIndex = 2;
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             // 
+            // col_WinTitle
+            // 
+            this.col_WinTitle.HeaderText = "Window Title";
+            this.col_WinTitle.Items.AddRange(new object[] {
+            "World of Warcraft",
+            "WoW1",
+            "WoW2",
+            "WoW3",
+            "WoW4",
+            "WoW5",
+            "WoW6",
+            "WoW7"});
+            this.col_WinTitle.Name = "col_WinTitle";
+            this.col_WinTitle.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.col_WinTitle.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            // 
+            // col_ConnectBtn
+            // 
+            this.col_ConnectBtn.HeaderText = "Add Bot";
+            this.col_ConnectBtn.Name = "col_ConnectBtn";
+            this.col_ConnectBtn.Text = "Add Bot";
+            this.col_ConnectBtn.UseColumnTextForButtonValue = true;
+            // 
+            // col_Status
+            // 
+            this.col_Status.HeaderText = "Status";
+            this.col_Status.Name = "col_Status";
+            this.col_Status.ReadOnly = true;
+            // 
             // flowLayoutPanel1
             // 
             this.flowLayoutPanel1.Controls.Add(this.cmbx_mainConnect);
@@ -116,35 +145,6 @@
             this.btn_mainConnect.Text = "Main Connection";
             this.btn_mainConnect.UseVisualStyleBackColor = true;
             this.btn_mainConnect.Click += new System.EventHandler(this.btn_mainConnect_Click);
-            // 
-            // col_WinTitle
-            // 
-            this.col_WinTitle.HeaderText = "Window Title";
-            this.col_WinTitle.Items.AddRange(new object[] {
-            "World of Warcraft",
-            "WoW1",
-            "WoW2",
-            "WoW3",
-            "WoW4",
-            "WoW5",
-            "WoW6",
-            "WoW7"});
-            this.col_WinTitle.Name = "col_WinTitle";
-            this.col_WinTitle.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.col_WinTitle.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            // 
-            // col_ConnectBtn
-            // 
-            this.col_ConnectBtn.HeaderText = "Add Bot";
-            this.col_ConnectBtn.Name = "col_ConnectBtn";
-            this.col_ConnectBtn.Text = "Add Bot";
-            this.col_ConnectBtn.UseColumnTextForButtonValue = true;
-            // 
-            // col_Status
-            // 
-            this.col_Status.HeaderText = "Status";
-            this.col_Status.Name = "col_Status";
-            this.col_Status.ReadOnly = true;
             // 
             // MainForm
             // 

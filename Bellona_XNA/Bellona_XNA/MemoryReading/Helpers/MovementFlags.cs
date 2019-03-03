@@ -93,7 +93,7 @@ namespace Bellona_XNA.MemoryReading.Helpers {
             IsMovingStraightLeft = (flagByte & 0x04) != 0;  //2^2=4
             IsMovingStraightRight = (flagByte & 0x08) != 0; //2^3=8
             IsTurningLeft = (flagByte & 0x10) != 0;         //2^4=16
-            IsTurningRight = (flagByte & 0x20) != 0;        //2^4=32
+            IsTurningRight = (flagByte & 0x20) != 0;        //2^5=32
         }
     }
 }

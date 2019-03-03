@@ -81,6 +81,8 @@ namespace Bellona_XNA.MemoryReading {
         public WoWObject() {
 
         }
+
+
         public static void GetAllObjects(ref List<WoWUnit> allunits, ref List<WoWSpell> allspells, ref List<WoWPlayer> allplayers, WoWConnection wc) {
             allunits = new List<WoWUnit>();
             allspells = new List<WoWSpell>();
@@ -92,7 +94,7 @@ namespace Bellona_XNA.MemoryReading {
                         wc.Connection.ReadFloat(TempObject.BaseAddress + MemoryOffsets.ObjectManagerUnitPosX),
                         wc.Connection.ReadFloat(TempObject.BaseAddress + MemoryOffsets.ObjectManagerUnitPosY),
                         wc.Connection.ReadFloat(TempObject.BaseAddress + MemoryOffsets.ObjectManagerUnitPosZ));
-                    WoWClass myClass = (WoWClass)wc.Connection.ReadByte(wc.Connection.ReadUInt((uint)TempObject.BaseAddress + MemoryOffsets.ObjectManagerLocalDescriptorArray) + 0x10 + MemoryOffsets.DescriptorArrayClass8);
+                    WoWClass myClass = (WoWClass)wc.Connection.ReadByte(wc.Connection.ReadUInt((uint)TempObject.BaseAddress + MemoryOffsets.ObjectManagerLocalDescriptorArray) + MemoryOffsets.DescriptorArrayClass8);
                     float myUnitRot = wc.Connection.ReadFloat((uint)TempObject.BaseAddress + MemoryOffsets.ObjectManagerUnitRotation);
                     if (myUnitRot > Math.PI) {
                         myUnitRot = -(2 * (float)(Math.PI) - myUnitRot);
@@ -104,11 +106,17 @@ namespace Bellona_XNA.MemoryReading {
                         wc.Connection.ReadFloat(TempObject.BaseAddress + MemoryOffsets.ObjectManagerUnitPosX),
                         wc.Connection.ReadFloat(TempObject.BaseAddress + MemoryOffsets.ObjectManagerUnitPosY),
                         wc.Connection.ReadFloat(TempObject.BaseAddress + MemoryOffsets.ObjectManagerUnitPosZ));
-                    WoWClass myClass = (WoWClass)wc.Connection.ReadByte(wc.Connection.ReadUInt((uint)TempObject.BaseAddress + MemoryOffsets.ObjectManagerLocalDescriptorArray) + 0x10 + MemoryOffsets.DescriptorArrayClass8);
+                    WoWClass myClass = WoWClass.None;
+                    try {
+                        myClass = (WoWClass)wc.Connection.ReadByte(wc.Connection.ReadUInt((uint)TempObject.BaseAddress + MemoryOffsets.ObjectManagerLocalDescriptorArray) + MemoryOffsets.DescriptorArrayClass8);
+                    }
+                    catch {
+
+                    }
                     float myPlayerRot = wc.Connection.ReadFloat(TempObject.BaseAddress + MemoryOffsets.ObjectManagerUnitRotation);
                     uint myMovementArrayAddress = wc.Connection.ReadUInt(TempObject.BaseAddress + MemoryOffsets.ObjectManagerLocalMovementArray);
 
-                    byte movebyte = wc.Connection.ReadByte(myMovementArrayAddress + MemoryOffsets.MovementArrayIsMoving8);
+                    byte movebyte = 0;// wc.Connection.ReadByte(myMovementArrayAddress + MemoryOffsets.MovementArrayIsMoving8);
                     if (myPlayerRot > Math.PI) {
                         myPlayerRot = -(2 * (float)(Math.PI) - myPlayerRot);
                     }

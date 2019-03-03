@@ -61,10 +61,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BlackMagic">
-      <HintPath>..\..\..\..\..\Downloads\BlackMagic.1.1\BlackMagic.dll</HintPath>
+      <HintPath>..\..\..\Bellona_Console\Bellona_Console\refs\BlackMagic.dll</HintPath>
     </Reference>
     <Reference Include="fasmdll_managed">
-      <HintPath>..\..\..\..\..\Downloads\BlackMagic.1.1\fasmdll_managed.dll</HintPath>
+      <HintPath>..\..\..\Bellona_Console\Bellona_Console\refs\fasmdll_managed.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.Game, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
@@ -105,6 +105,18 @@
     <Compile Include="Radar\RadarObjects\RadarPlayer.cs" />
     <Compile Include="Radar\RadarObjects\RadarSpell.cs" />
     <Compile Include="Radar\RadarObjects\RadarUnit.cs" />
+    <Compile Include="WinForms\FormChooser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WinForms\FormChooser.Designer.cs">
+      <DependentUpon>FormChooser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WinForms\LevelingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WinForms\LevelingForm.Designer.cs">
+      <DependentUpon>LevelingForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="WinForms\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -145,6 +157,12 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="WinForms\FormChooser.resx">
+      <DependentUpon>FormChooser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WinForms\LevelingForm.resx">
+      <DependentUpon>LevelingForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="WinForms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
