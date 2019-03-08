@@ -24,6 +24,11 @@ namespace Bellona_XNA.Control {
             float vy = Target.Position.Y - Player.Position.Y;
             return Math.Sign(vy) * Math.Acos((vx * 1 + vy * 0) / (Math.Sqrt(vx * vx + vy * vy)));
         }
+        public static double Calculateangle(Vector3 TargetPos, Vector3 PlayerPos) {
+            float vx = TargetPos.X - PlayerPos.X;
+            float vy = TargetPos.Y - PlayerPos.Y;
+            return Math.Sign(vy) * Math.Acos((vx * 1 + vy * 0) / (Math.Sqrt(vx * vx + vy * vy)));
+        }
         public static double Calculateangle(Vector2 TargetPos, Vector3 PlayerPos) {
             float vx = TargetPos.X - PlayerPos.X;
             float vy = TargetPos.Y - PlayerPos.Y;

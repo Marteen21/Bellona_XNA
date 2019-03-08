@@ -27,6 +27,11 @@ namespace Bellona_XNA.Control.WoWControl {
         private static readonly uint WM_KEYDOWN = 0x0100;
         private static readonly uint WM_KEYUP = 0x0101;
 
+        public static void Send(ConstController.WindowsVirtualKey Key) {
+            Send(Key, "World of Warcraft");
+        }
+
+
         public static void Send(ConstController.WindowsVirtualKey Key, string PROCESS_WINDOW_TITLE) {
             IntPtr Handle = FindWindow(null, PROCESS_WINDOW_TITLE);
             PostMessage(Handle, WM_KEYDOWN, (int)Key, 0);

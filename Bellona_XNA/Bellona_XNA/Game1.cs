@@ -25,15 +25,16 @@ namespace Bellona_XNA {
 
         RadarControl radarctrl;
 
-        List<WoWUnit> allUnits = new List<WoWUnit>();
+        public static List<WoWUnit> allUnits = new List<WoWUnit>();
         public static List<WoWPlayer> allPlayers = new List<WoWPlayer>();
-        List<WoWSpell> allSpells = new List<WoWSpell>();
+        public static List<WoWSpell> allSpells = new List<WoWSpell>();
 
 
-        WoWConnection mainwow;
+        public static WoWConnection mainwow;
         public static WoWPlayer mainPlayer;
         public static WoWObject target;
         public static bool GameEnabled;
+        public static GameTime mygameTime;
 
         TimeSpan previousRefreshTime = TimeSpan.Zero;
         public Game1(IntPtr drawSurface) {
@@ -57,6 +58,10 @@ namespace Bellona_XNA {
             while (!IsAtTarget(target, 1) && isMoving) {
                 isMoving = mainwow.Connection.ReadUInt((uint)mainwow.Connection.MainModule.BaseAddress + MemoryOffsets.ClickToMoveStarter) == 4;
             }
+        }
+
+        private bool IsAtTarget(Vector3 target, float threshold) {
+            return Vector3.Distance(mainPlayer.Position, target) < threshold;
         }
 
         private void MoveToCommand(Vector3 target) {
@@ -116,11 +121,6 @@ namespace Bellona_XNA {
             
         }
 
-        bool IsAtTarget (Vector3 target, float threshold) {
-            mainPlayer.Refresh(mainwow);
-            return Vector3.Distance(mainPlayer.Position, target) < threshold;
-        }
-
         void graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e) {
             e.GraphicsDeviceInformation.PresentationParameters.DeviceWindowHandle =
             drawSurface;
@@ -169,6 +169,7 @@ namespace Bellona_XNA {
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime) {
+            mygameTime = gameTime;
             // Allows the game to exit
             if (Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.Escape)) {
                 this.Exit();

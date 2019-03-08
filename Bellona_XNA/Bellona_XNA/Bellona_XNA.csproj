@@ -84,6 +84,7 @@
     <Compile Include="Control\CoordinateChanger.cs" />
     <Compile Include="Control\RadarControl.cs" />
     <Compile Include="Control\WoWControl\ConstController.cs" />
+    <Compile Include="Control\WoWControl\Grinder.cs" />
     <Compile Include="Control\WoWControl\MoveController.cs" />
     <Compile Include="Control\WoWControl\SendKey.cs" />
     <Compile Include="Draw\ExtendedSpriteBatch.cs" />

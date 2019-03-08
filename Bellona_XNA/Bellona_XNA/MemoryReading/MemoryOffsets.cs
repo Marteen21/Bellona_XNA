@@ -12,6 +12,8 @@ namespace Bellona_XNA.MemoryReading {
         public static readonly uint ObjectManagerLocalGUID = 0x30;
         public static readonly uint ObjectManagerSpellID = 0x1A4;
         public static readonly uint ObjectManagerLocalDescriptorArray = 0xC;
+        public static readonly uint ObjectManagerLocalCombatInfoArray = 0x08;
+        public static readonly uint UnitIsInCombat = 0xBA;
         public static readonly uint ObjectManagerLocalMovementArray = 0x100;
 
         public static readonly uint DescriptorArrayClass8 = 0x7d;
@@ -28,8 +30,11 @@ namespace Bellona_XNA.MemoryReading {
         public static readonly uint ObjectManagerUnitRotation = 0xBFC;
 
 
-        public static readonly uint GlobalInfoPlayerGUID = 0x943340;
-        public static readonly uint GlobalInfoTargetGUID = 0x86E960;
+        public static readonly uint GlobalInfoPlayerGUID    = 0x943340;
+        public static readonly uint GlobalInfoTargetGUID    = 0x86E960;
+        public static readonly uint GlobalInfoPetGUID       = 0x8DFDA0;
+        public static readonly uint GlobalInfoSpellBeingCasted = 0xA1D72C;
+        public static readonly uint GlobalInfoSpellBeingChanelled = 0x8F21CC;
 
         public static readonly uint ClickToMoveTargetXOffset = 0x968a18;
         public static readonly uint ClickToMoveTargetYOffset = 0x968a1C;
@@ -54,6 +59,11 @@ namespace Bellona_XNA.MemoryReading {
             Intellect = 0x278,
             Spirit = 0x27C,
             Armor = 0x280
+        }
+
+        public enum CombatInfo : uint
+        {
+            TargetGUID = 0x40
         }
 
     }

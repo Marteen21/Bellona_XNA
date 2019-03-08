@@ -61,6 +61,7 @@ namespace Bellona_XNA.MemoryReading {
 
         public float Healthpercent { get => healthpercent; set => healthpercent = value; }
         public float Powerpercent { get => powerpercent; set => powerpercent = value; }
+        public WoWClass UnitClass { get => unitClass; set => unitClass = value; }
 
         public void SetPositions(WoWPlayer other) {
             this.position = other.position;
@@ -123,6 +124,7 @@ namespace Bellona_XNA.MemoryReading {
                             wc.Connection.ReadFloat(BaseAddress + MemoryOffsets.ObjectManagerUnitPosY),
                             wc.Connection.ReadFloat(BaseAddress + MemoryOffsets.ObjectManagerUnitPosZ));
                 position = myUnitPos;
+                Rotation = wc.Connection.ReadFloat(BaseAddress + MemoryOffsets.ObjectManagerUnitRotation);
 
                 UIntPtr descriptorArrayAddress = (UIntPtr)(wc.Connection.ReadUInt(this.BaseAddress + MemoryOffsets.ObjectManagerLocalDescriptorArray));
                 uint Health = wc.Connection.ReadUInt((uint)descriptorArrayAddress + (uint)MemoryOffsets.Descriptors.Health);

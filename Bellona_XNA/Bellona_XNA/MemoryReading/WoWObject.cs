@@ -89,7 +89,7 @@ namespace Bellona_XNA.MemoryReading {
             List<WoWPlayer> tempplayers = new List<WoWPlayer>();
             WoWObject TempObject = new WoWObject(wc.FirstObjectAddress, wc);
             while ((uint)TempObject.BaseAddress != 0 && TempObject.Guid != 0) {
-                if (TempObject.UnitType == WoWUnitType.NPC) {
+                if (TempObject.UnitType == WoWUnitType.NPC || TempObject.UnitType == WoWUnitType.PermanentPet) {
                     Vector3 myUnitPos = new Vector3(
                         wc.Connection.ReadFloat(TempObject.BaseAddress + MemoryOffsets.ObjectManagerUnitPosX),
                         wc.Connection.ReadFloat(TempObject.BaseAddress + MemoryOffsets.ObjectManagerUnitPosY),

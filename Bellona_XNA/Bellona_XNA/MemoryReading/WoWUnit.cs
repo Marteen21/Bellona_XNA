@@ -27,6 +27,9 @@ namespace Bellona_XNA.MemoryReading {
         private float rotation;
         private WoWClass unitClass;
         private RadarUnit rUnit;
+        private ulong targetGUID;
+        private double healthPercent;
+        private double powerpercent { get; set; }
 
         public Vector3 Position {
             get {
@@ -47,6 +50,9 @@ namespace Bellona_XNA.MemoryReading {
                 rUnit = value;
             }
         }
+
+        public double HealthPercent { get => healthPercent; set => healthPercent = value; }
+        public ulong TargetGUID { get => targetGUID; set => targetGUID = value; }
 
         public WoWUnit(WoWObject wo, Vector3 pos,float rot, WoWClass uClass) : base(wo) {
             this.position = pos;
@@ -79,6 +85,18 @@ namespace Bellona_XNA.MemoryReading {
                             wc.Connection.ReadFloat(BaseAddress + MemoryOffsets.ObjectManagerUnitPosY),
                             wc.Connection.ReadFloat(BaseAddress + MemoryOffsets.ObjectManagerUnitPosZ));
                 position = myUnitPos;
+
+                UIntPtr descriptorArrayAddress = (UIntPtr)(wc.Connection.ReadUInt(this.BaseAddress + MemoryOffsets.ObjectManagerLocalDescriptorArray));
+                UIntPtr combatArrayAddress = (UIntPtr)(wc.Connection.ReadUInt(this.BaseAddress + MemoryOffsets.ObjectManagerLocalCombatInfoArray));
+                uint Health = wc.Connection.ReadUInt((uint)descriptorArrayAddress + (uint)MemoryOffsets.Descriptors.Health);
+                uint MaxHealth = wc.Connection.ReadUInt((uint)descriptorArrayAddress + (uint)MemoryOffsets.Descriptors.MaxHealth);
+                uint Power = wc.Connection.ReadUInt((uint)descriptorArrayAddress + (uint)MemoryOffsets.Descriptors.Power);
+                uint MaxPower = wc.Connection.ReadUInt((uint)descriptorArrayAddress + (uint)MemoryOffsets.Descriptors.MaxPower);
+
+                HealthPercent = (float)Health / (float)MaxHealth;
+                powerpercent = (float)Power / (float)MaxPower;
+
+                TargetGUID = wc.Connection.ReadUInt64((uint)combatArrayAddress + (uint)MemoryOffsets.CombatInfo.TargetGUID);
             }
             catch {
 

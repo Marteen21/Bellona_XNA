@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Bellona_XNA.Control.WoWControl;
 using Bellona_XNA.MemoryReading;
 using Microsoft.Xna.Framework;
 
@@ -16,6 +17,7 @@ namespace Bellona_XNA.WinForms
 {
     public partial class LevelingForm : Form
     {
+        Grinder grinder;
         Task travelTask;
         private CancellationTokenSource Canceller { get; set; }
 
@@ -50,6 +52,7 @@ namespace Bellona_XNA.WinForms
             catch (NullReferenceException) {
 
             }
+
         }
 
         private void button3_Click(object sender, EventArgs e) {
@@ -72,20 +75,11 @@ namespace Bellona_XNA.WinForms
         }
 
 
-        private void Grind () {
+        private void Grind() {
+            List<Vector3> cs = GetPoses();
+            grinder = new Grinder(Game1.mainwow, Game1.mainPlayer, cs);
             while (true) {
-                for (int i = 0; i < dataGridView1.Rows.Count; ++i) {
-                    try {
-                        var cells = dataGridView1.Rows[i].Cells;
-                        Vector3 vector3 = new Vector3((float)cells[0].Value, (float)cells[1].Value, (float)cells[2].Value);
-                        Program.myGame.MoveTo(vector3);
-                        Program.myGame.RefreshShit();
-                        Program.myGame.KillNearbyTargets();
-                    }
-                    catch {
-
-                    }
-                }
+                grinder.Update();
             }
         }
 
@@ -110,7 +104,6 @@ namespace Bellona_XNA.WinForms
         }
 
         private void button6_Click(object sender, EventArgs e) {
-            Program.myGame.KillTarget();
         }
 
         private void button5_Click_1(object sender, EventArgs e) {
@@ -119,6 +112,41 @@ namespace Bellona_XNA.WinForms
 
         private void button7_Click(object sender, EventArgs e) {
             Grind();
+        }
+
+        private List<Vector3> GetPoses() {
+            List<Vector3> cs = new List<Vector3>();
+            for (int i = 0; i < dataGridView1.Rows.Count; ++i) {
+                try {
+                    var cells = dataGridView1.Rows[i].Cells;
+                    Vector3 vector3 = new Vector3(float.Parse(cells[0].Value.ToString()), float.Parse(cells[1].Value.ToString()), float.Parse(cells[2].Value.ToString()));
+                    cs.Add(vector3);
+                }
+                catch {
+
+                }
+             }
+            return cs;
+        }
+
+        private void button8_Click(object sender, EventArgs e) {
+            var cs = GetPoses();
+            List<string> lines = new List<string>();
+            foreach (Vector3 vector in cs) {
+                lines.Add(vector.X + "," + vector.Y + "," + vector.Z + "\n");
+            }
+            System.IO.File.WriteAllLines(@".\poses.txt", lines);
+        }
+
+        private void button9_Click(object sender, EventArgs e) {
+            string[] lines = System.IO.File.ReadAllLines(@".\poses.txt");
+
+            foreach (string line in lines) {
+                if (line != "") {
+                    string[] coords = line.Split(',');
+                    this.dataGridView1.Rows.Add(coords[0], coords[1], coords[2]);
+                }
+            }
         }
     }
 }
